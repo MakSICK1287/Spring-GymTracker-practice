@@ -4,6 +4,7 @@ import org.example.gymtrackerspring.entity.Workout;
 import org.example.gymtrackerspring.repository.WorkoutRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -23,7 +24,13 @@ public class WorkoutService {
         repository.deleteById(id);
     }
 
-    public Workout save(Workout workout) {
+    public Workout saveWorkout(Workout workout){
         return repository.save(workout);
     }
+
+    public Workout getWorkoutByDate(LocalDate date){
+        return repository.findByDate(date).orElseThrow(() -> new RuntimeException("Тренировка не найдена"));
+    }
+
+
 }
