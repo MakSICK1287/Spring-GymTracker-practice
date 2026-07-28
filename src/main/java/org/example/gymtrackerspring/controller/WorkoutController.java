@@ -1,5 +1,7 @@
 package org.example.gymtrackerspring.controller;
 
+import jakarta.validation.Valid;
+import org.example.gymtrackerspring.dto.CreateWorkoutRequest;
 import org.example.gymtrackerspring.entity.Workout;
 import org.example.gymtrackerspring.service.WorkoutService;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +29,14 @@ public class WorkoutController {
         return service.getWorkoutByDate(date);
     }
 
+    @GetMapping("/{id}")
+    public Workout getWorkout(@PathVariable Long id) {
+        return service.getWorkout(id);
+    }
+
     @PostMapping
-    public Workout createWorkout(@RequestBody Workout workout){
-        return service.saveWorkout(workout);
+    public Workout createWorkout(@Valid @RequestBody CreateWorkoutRequest request){
+        return service.saveWorkout(request.getDate());
     }
 
 }
