@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class CreateExerciseRequest {
+public class UpdateExerciseRequest {
 
     @NotNull
     private String name;
