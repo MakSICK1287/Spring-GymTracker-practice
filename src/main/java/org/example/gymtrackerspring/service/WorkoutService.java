@@ -1,10 +1,10 @@
 package org.example.gymtrackerspring.service;
 
-import org.example.gymtrackerspring.dto.CreateWorkoutRequest;
 import org.example.gymtrackerspring.entity.Workout;
 import org.example.gymtrackerspring.exception.WorkoutNotFoundException;
 import org.example.gymtrackerspring.repository.WorkoutRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -22,11 +22,13 @@ public class WorkoutService {
         return repository.findAll();
     }
 
+    @Transactional
     public void deleteWorkout(Long id){
-        repository.deleteById(id);
+        Workout workout = getWorkout(id);
+        repository.delete(workout);
     }
 
-    public Workout saveWorkout(LocalDate date){
+    public Workout createWorkout(LocalDate date){
         Workout workout = new Workout(date);
         return repository.save(workout);
     }
@@ -40,7 +42,8 @@ public class WorkoutService {
                 .orElseThrow(() -> new WorkoutNotFoundException(id));
     }
 
-    public Workout updateWorkoutDate(Long id, LocalDate newDate){
+    @Transactional
+    public Workout updateWorkout(Long id, LocalDate newDate){
         Workout workout = repository.findById(id).orElseThrow(()->new WorkoutNotFoundException(id));
         workout.setDate(newDate);
         return repository.save(workout);
