@@ -7,7 +7,6 @@ import org.example.gymtrackerspring.dto.UpdateExerciseRequest;
 import org.example.gymtrackerspring.entity.Exercise;
 import org.example.gymtrackerspring.mapper.ExerciseMapper;
 import org.example.gymtrackerspring.service.ExerciseService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +27,8 @@ public class ExerciseController {
 
     @GetMapping("/{id}")
     public ExerciseResponse getExercise(@PathVariable Long id){
-        return mapper.toResponse(service.getExerciseById(id));
+        Exercise exercise = service.getExerciseById(id);
+        return mapper.toResponse(exercise);
     }
 
     @GetMapping
@@ -45,7 +45,7 @@ public class ExerciseController {
     @PostMapping
     public ResponseEntity<ExerciseResponse> createExercise(
             @PathVariable Long workoutId,
-            @RequestBody CreateExerciseRequest request) {
+            @Valid @RequestBody CreateExerciseRequest request) {
         Exercise exercise = service.addExercise(workoutId, request.getName());
         return ResponseEntity.created(URI.create("/exercises/" + exercise.getId())).body(mapper.toResponse(exercise));
     }

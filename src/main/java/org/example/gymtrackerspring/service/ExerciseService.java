@@ -45,9 +45,9 @@ public class ExerciseService {
 
     @Transactional
     public Exercise updateExercise(Long id, String name){
-        Exercise exercise = exerciseRepository.findById(id).orElseThrow(()->new ExerciseNotFoundException(id));
+        Exercise exercise = getExerciseById(id);
         exercise.setName(name);
-        return exerciseRepository.save(exercise);
+        return exercise;
     }
 
     @Transactional

@@ -46,7 +46,7 @@ public class WorkoutService {
     public Workout updateWorkout(Long id, LocalDate newDate){
         Workout workout = repository.findById(id).orElseThrow(()->new WorkoutNotFoundException(id));
         workout.setDate(newDate);
-        return repository.save(workout);
+        return workout;
     }
 
 
