@@ -26,6 +26,9 @@ public class Workout {
     private LocalDate date;
     @OneToMany(mappedBy = "workout", cascade = CascadeType.ALL)
     private List<Exercise> exercises = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Workout(LocalDate date) {
         this.date = date;
