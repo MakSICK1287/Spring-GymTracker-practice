@@ -8,7 +8,6 @@ import org.jspecify.annotations.NullMarked;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +49,6 @@ public class User implements UserDetails {
     }
 
     @Override
-    @NullMarked
     public String getUsername() {
         return username;
     }
@@ -61,16 +59,8 @@ public class User implements UserDetails {
     }
 
     @Override
-    @NullMarked
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String rl;
-        if(this.role == Role.USER){
-            rl = "ROLE_USER";
-        }
-        else{
-            rl = "ROLE_ADMIN";
-        }
-        return List.of(new SimpleGrantedAuthority(rl));
+        return List.of(new SimpleGrantedAuthority(role.getAuthority()));
     }
 
     @Override
@@ -90,6 +80,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
 }

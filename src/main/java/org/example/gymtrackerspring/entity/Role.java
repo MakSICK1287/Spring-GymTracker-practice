@@ -1,6 +1,19 @@
 package org.example.gymtrackerspring.entity;
 
+import lombok.Getter;
+
 public enum Role {
-    USER,
-    ADMIN
+    USER("ROLE_USER"),
+    ADMIN("ROLE_ADMIN");
+
+    private final String authority;
+
+    Role(String authority) {
+        this.authority = authority;
+    }
+
+    public String getAuthority() {
+        return authority;
+    }
+
 }

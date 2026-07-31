@@ -4,7 +4,10 @@ import org.example.gymtrackerspring.entity.Role;
 import org.example.gymtrackerspring.entity.User;
 import org.example.gymtrackerspring.exception.EmailAlreadyExistsException;
 import org.example.gymtrackerspring.exception.UsernameAlreadyExistsException;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.example.gymtrackerspring.repository.UserRepository;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +16,25 @@ public class AuthService {
 
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
-    public AuthService(UserRepository repository, PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository repository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+    }
+
+    public User login(String username,String password){
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                username,
+                                password
+                        )
+                );
+
+        return (User) authentication.getPrincipal();
+
     }
 
     public User register(String username,String password,String email){
