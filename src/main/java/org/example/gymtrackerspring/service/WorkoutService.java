@@ -1,5 +1,6 @@
 package org.example.gymtrackerspring.service;
 
+import org.example.gymtrackerspring.entity.User;
 import org.example.gymtrackerspring.entity.Workout;
 import org.example.gymtrackerspring.exception.WorkoutNotFoundException;
 import org.example.gymtrackerspring.repository.WorkoutRepository;
@@ -13,13 +14,15 @@ import java.util.List;
 public class WorkoutService {
 
     private final WorkoutRepository repository;
+    private final CurrentUserService currentUserService;
 
-    public WorkoutService(WorkoutRepository repository) {
+    public WorkoutService(WorkoutRepository repository, CurrentUserService currentUserService) {
         this.repository = repository;
+        this.currentUserService = currentUserService;
     }
 
     public List<Workout> getAllWorkouts() {
-        return repository.findAll();
+        return repository.findAllByUser(currentUserService.getCurrentUser());
     }
 
     @Transactional
@@ -30,21 +33,18 @@ public class WorkoutService {
 
     public Workout createWorkout(LocalDate date){
         Workout workout = new Workout(date);
+        workout.setUser(currentUserService.getCurrentUser());
         return repository.save(workout);
     }
 
-    public Workout getWorkoutByDate(LocalDate date){
-        return repository.findByDate(date).orElseThrow(() -> new WorkoutNotFoundException(date));
-    }
-
     public Workout getWorkout(Long id) {
-        return repository.findById(id)
+        return repository.findByIdAndUser(id,currentUserService.getCurrentUser())
                 .orElseThrow(() -> new WorkoutNotFoundException(id));
     }
 
     @Transactional
     public Workout updateWorkout(Long id, LocalDate newDate){
-        Workout workout = repository.findById(id).orElseThrow(()->new WorkoutNotFoundException(id));
+        Workout workout = repository.findByIdAndUser(id, currentUserService.getCurrentUser()).orElseThrow(()->new WorkoutNotFoundException(id));
         workout.setDate(newDate);
         return workout;
     }

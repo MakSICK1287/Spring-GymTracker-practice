@@ -31,11 +31,6 @@ public class WorkoutController {
         return service.getAllWorkouts().stream().map(mapper::toResponse).toList();
     }
 
-    @GetMapping("/date/{date}")
-    public WorkoutResponse getWorkoutByDate(@PathVariable LocalDate date) {
-        Workout workout = service.getWorkoutByDate(date);
-        return mapper.toResponse(workout);
-    }
 
     @GetMapping("/{id}")
     public WorkoutResponse getWorkout(@PathVariable Long id) {

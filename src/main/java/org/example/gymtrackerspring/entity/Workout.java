@@ -36,7 +36,8 @@ public class Workout {
     }
 
     public void addExercise(Exercise exercise) {
-        this.exercises.add(exercise);
+        exercises.add(exercise);
+        exercise.setWorkout(this);
     }
 
     public void setId(Long id) {

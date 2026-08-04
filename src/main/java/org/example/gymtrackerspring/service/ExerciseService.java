@@ -1,6 +1,7 @@
 package org.example.gymtrackerspring.service;
 
 import org.example.gymtrackerspring.entity.Exercise;
+import org.example.gymtrackerspring.entity.User;
 import org.example.gymtrackerspring.entity.Workout;
 import org.example.gymtrackerspring.exception.ExerciseNotFoundException;
 import org.example.gymtrackerspring.exception.WorkoutNotFoundException;
@@ -16,30 +17,26 @@ public class ExerciseService {
 
 
     private final ExerciseRepository exerciseRepository;
-    private final WorkoutRepository workoutRepository;
+    private final WorkoutService workoutService;
+    private final CurrentUserService currentUserService;
 
-    public ExerciseService(ExerciseRepository exerciseRepository, WorkoutRepository workoutRepository) {
+    public ExerciseService(ExerciseRepository exerciseRepository, WorkoutService workoutService, CurrentUserService currentUserService) {
         this.exerciseRepository = exerciseRepository;
-        this.workoutRepository = workoutRepository;
+        this.workoutService = workoutService;
+        this.currentUserService = currentUserService;
     }
 
     public List<Exercise> findAllExercises(Long workoutId){
-        return exerciseRepository.findByWorkoutId(workoutId);
+        return exerciseRepository.findByWorkout(workoutService.getWorkout(workoutId));
     }
 
     public Exercise getExerciseById(Long id){
-        return exerciseRepository.findById(id).orElseThrow(()-> new ExerciseNotFoundException(id));
+        return exerciseRepository.findByIdAndWorkoutUser(id, currentUserService.getCurrentUser()).orElseThrow(()-> new ExerciseNotFoundException(id));
     }
 
     public Exercise addExercise(Long workoutId, String name) {
-
-        Workout workout = workoutRepository.findById(workoutId)
-                .orElseThrow(() -> new WorkoutNotFoundException(workoutId));
-
         Exercise exercise = new Exercise(name);
-
-        exercise.setWorkout(workout);
-
+        exercise.setWorkout(workoutService.getWorkout(workoutId));
         return exerciseRepository.save(exercise);
     }
 

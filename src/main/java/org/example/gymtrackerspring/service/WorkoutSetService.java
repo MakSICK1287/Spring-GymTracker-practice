@@ -1,6 +1,7 @@
 package org.example.gymtrackerspring.service;
 
 import org.example.gymtrackerspring.entity.Exercise;
+import org.example.gymtrackerspring.entity.User;
 import org.example.gymtrackerspring.entity.WorkoutSet;
 import org.example.gymtrackerspring.exception.ExerciseNotFoundException;
 import org.example.gymtrackerspring.exception.WorkoutSetNotFoundException;
@@ -15,28 +16,28 @@ import java.util.List;
 public class WorkoutSetService {
 
     private final WorkoutSetRepository  workoutSetRepository;
-    private final ExerciseRepository exerciseRepository;
+    private final ExerciseService exerciseService;
+    private final CurrentUserService currentUserService;
 
-    public WorkoutSetService(WorkoutSetRepository workoutSetRepository, ExerciseRepository exerciseRepository) {
+    public WorkoutSetService(WorkoutSetRepository workoutSetRepository, ExerciseService exerciseService, CurrentUserService currentUserService) {
         this.workoutSetRepository = workoutSetRepository;
-        this.exerciseRepository = exerciseRepository;
+        this.exerciseService = exerciseService;
+        this.currentUserService = currentUserService;
     }
 
     public WorkoutSet addSet(Long exerciseId, double weight, int reps){
-        Exercise exercise = exerciseRepository.findById(exerciseId)
-                .orElseThrow(() -> new ExerciseNotFoundException(exerciseId));
         WorkoutSet set = new WorkoutSet(weight,reps);
-        set.setExercise(exercise);
+        set.setExercise(exerciseService.getExerciseById(exerciseId));
         return workoutSetRepository.save(set);
     }
 
     public WorkoutSet getSetById(Long id){
-        return workoutSetRepository.findById(id)
+        return workoutSetRepository.findByIdAndExerciseWorkoutUser(id,currentUserService.getCurrentUser())
                 .orElseThrow(()-> new WorkoutSetNotFoundException(id));
     }
 
     public List<WorkoutSet> getAllSets(Long exerciseId){
-        return workoutSetRepository.findByExerciseId(exerciseId);
+        return workoutSetRepository.findByExercise(exerciseService.getExerciseById(exerciseId));
     }
 
     @Transactional
