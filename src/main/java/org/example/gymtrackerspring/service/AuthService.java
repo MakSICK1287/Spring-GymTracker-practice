@@ -14,17 +14,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    private final UserRepository repository;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
 
-    public AuthService(UserRepository repository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
-        this.repository = repository;
+    public AuthService(JwtService jwtService, UserRepository repository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+        this.jwtService = jwtService;
+        this.userRepository = repository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
     }
 
-    public User login(String username,String password){
+    public String login(String username,String password){
         Authentication authentication =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
@@ -33,15 +35,17 @@ public class AuthService {
                         )
                 );
 
-        return (User) authentication.getPrincipal();
+        User user = (User) authentication.getPrincipal();
+
+        return jwtService.generateToken(user);
 
     }
 
-    public User register(String username,String password,String email){
-        if(repository.existsByUsername(username)){
+    public String register(String username,String password,String email){
+        if(userRepository.existsByUsername(username)){
             throw new UsernameAlreadyExistsException(username);
         }
-        if(repository.existsByEmail(email)){
+        if(userRepository.existsByEmail(email)){
             throw new EmailAlreadyExistsException(email);
         }
 
@@ -50,6 +54,7 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(password));
         user.setEmail(email);
         user.setRole(Role.USER);
-        return repository.save(user);
+        user = userRepository.save(user);
+        return jwtService.generateToken(user);
     }
 }
