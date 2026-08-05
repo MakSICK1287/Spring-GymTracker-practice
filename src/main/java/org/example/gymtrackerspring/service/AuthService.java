@@ -57,4 +57,6 @@ public class AuthService {
         user = userRepository.save(user);
         return jwtService.generateToken(user);
     }
+
+
 }

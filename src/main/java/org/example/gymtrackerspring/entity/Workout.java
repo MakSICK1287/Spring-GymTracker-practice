@@ -40,14 +40,6 @@ public class Workout {
         exercise.setWorkout(this);
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
     @Override
     public String toString() {
         return "Тренировка (" + date + ")";

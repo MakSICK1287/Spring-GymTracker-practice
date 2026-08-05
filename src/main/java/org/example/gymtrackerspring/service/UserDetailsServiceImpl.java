@@ -1,8 +1,8 @@
 package org.example.gymtrackerspring.service;
 
-import org.example.gymtrackerspring.exception.UsernameNotFoundException;
 import org.example.gymtrackerspring.repository.UserRepository;
 import org.jspecify.annotations.NullMarked;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
